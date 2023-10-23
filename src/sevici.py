@@ -1,7 +1,7 @@
 import csv
 import folium
 from collections import namedtuple
-from coordenadas import Coordenadas
+from coordenadas import Coordenadas, calcula_distancia
 
 Estacion = namedtuple(
     'Estacion', 'nombre, bornetas, bornetas_vacias, bicis_disponibles, coordenadas')
@@ -60,13 +60,17 @@ def estaciones_bicis_libres(estaciones, k=5):
     res.sort(reverse=True)
     return res
 
+
 def estaciones_cercanas(estaciones, ubicacion_usuario, k=5):
     # En res hay que devolver tuplas formadas por (distancia, nombre, bicis disponibles)
     res = []
     for e in estaciones:
         if e.bicis_disponibles > 0:
+            # Calculo la distancia entre la ubicación del usuario
+            # y la ubicación de la estación e
+            distancia = calcula_distancia(ubicacion_usuario, e.coordenadas)
             res.append(
-                ("distancia", e.nombre, e.bicis_disponibles)
+                (distancia, e.nombre, e.bicis_disponibles)
             )
     res.sort()
     return res[:k]
